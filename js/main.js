@@ -280,15 +280,6 @@ document.querySelectorAll('.ab-case-tab').forEach(function (btn) {
   });
 });
 
-/* ===== Международная главная: пресет поля "где работает бизнес" ===== */
-document.querySelectorAll('[data-preset-region]').forEach(function (link) {
-  link.addEventListener('click', function () {
-    var value = link.getAttribute('data-preset-region');
-    var input = document.querySelector('input[name="business_region"][value="' + value + '"]');
-    if (input) input.checked = true;
-  });
-});
-
 /* ===== Международная главная: exit-intent попап (десктоп, один раз за сессию) ===== */
 (function () {
   var popup = document.getElementById('popup-exit');

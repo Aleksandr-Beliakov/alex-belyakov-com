@@ -1146,18 +1146,3 @@ button[style*="background:#FF5A1F"]:hover {
   .ab-sticky-bar-actions > a { flex: 1; justify-content: center; }
   .ab-has-sticky-bar { padding-bottom: 168px; }
 }
-
-.ab-request-radio-row { display: flex; flex-wrap: wrap; gap: 10px; }
-.ab-request-radio-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #23201A;
-  border: 1px solid #36322A;
-  border-radius: 10px;
-  padding: 11px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #D7D2C9;
-}
-.ab-request-radio-item input { accent-color: #FF5A1F; }
