@@ -264,3 +264,42 @@ document.querySelectorAll('.ab-compare-tab').forEach(function (btn) {
     });
   });
 });
+
+/* ===== Международная главная: фильтр кейсов по тегам ===== */
+document.querySelectorAll('.ab-case-tab').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var wrap = btn.closest('.ab-cases-filter-wrap');
+    if (!wrap) return;
+    var tag = btn.getAttribute('data-case-tab');
+    wrap.querySelectorAll('.ab-case-tab').forEach(function (b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+    wrap.querySelectorAll('[data-case-tags]').forEach(function (card) {
+      var tags = card.getAttribute('data-case-tags').split(' ');
+      card.style.display = (tag === 'all' || tags.indexOf(tag) !== -1) ? '' : 'none';
+    });
+  });
+});
+
+/* ===== Международная главная: пресет поля "где работает бизнес" ===== */
+document.querySelectorAll('[data-preset-region]').forEach(function (link) {
+  link.addEventListener('click', function () {
+    var value = link.getAttribute('data-preset-region');
+    var input = document.querySelector('input[name="business_region"][value="' + value + '"]');
+    if (input) input.checked = true;
+  });
+});
+
+/* ===== Международная главная: exit-intent попап (десктоп, один раз за сессию) ===== */
+(function () {
+  var popup = document.getElementById('popup-exit');
+  if (!popup) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (sessionStorage.getItem('ab_exit_shown')) return;
+
+  document.addEventListener('mouseout', function (e) {
+    if (e.clientY > 0 || e.relatedTarget) return;
+    if (sessionStorage.getItem('ab_exit_shown')) return;
+    sessionStorage.setItem('ab_exit_shown', '1');
+    popup.classList.add('is-open');
+  });
+})();
