@@ -1233,3 +1233,8 @@ html { scroll-padding-top: 88px; }
   .ab-case-media { flex-basis: auto; padding: 16px 16px 0; }
   .ab-case-frame { height: auto; aspect-ratio: 16 / 9; border-radius: 10px 10px 0 0; }
 }
+
+@media (max-width: 480px) {
+  .ab-hero-facts { display: flex !important; flex-wrap: wrap !important; column-gap: 24px !important; row-gap: 16px !important; }
+  .ab-hero-facts > div { flex: 0 0 auto !important; }
+}
