@@ -15,9 +15,13 @@
   function showBanner() {
     var el = document.createElement('div');
     el.className = 'ab-cookie-banner';
+    var isEn = document.documentElement.lang === 'en';
+    var text = isEn
+      ? 'This site uses cookies to work properly, improve your experience, and analyze traffic. By clicking "Accept" or continuing to use the site, you agree to the use of cookies.'
+      : 'Этот сайт использует файлы cookie для корректной работы, улучшения пользовательского опыта и анализа посещаемости. Нажимая кнопку «Принять» или продолжая пользоваться сайтом, вы соглашаетесь с использованием файлов cookie.';
     el.innerHTML =
-      '<p class="ab-cookie-banner-text">Этот сайт использует файлы cookie для корректной работы, улучшения пользовательского опыта и анализа посещаемости. Нажимая кнопку «Принять» или продолжая пользоваться сайтом, вы соглашаетесь с использованием файлов cookie. <a href="/privacy.html#cookies" target="_blank" rel="noopener noreferrer" class="ab-cookie-banner-link">Подробнее.</a></p>' +
-      '<button type="button" class="ab-cookie-banner-accept">Принять</button>';
+      '<p class="ab-cookie-banner-text">' + text + ' <a href="/privacy.html#cookies" target="_blank" rel="noopener noreferrer" class="ab-cookie-banner-link">' + (isEn ? 'Learn more.' : 'Подробнее.') + '</a></p>' +
+      '<button type="button" class="ab-cookie-banner-accept">' + (isEn ? 'Accept' : 'Принять') + '</button>';
     document.body.appendChild(el);
 
     el.querySelector('.ab-cookie-banner-accept').addEventListener('click', function () {

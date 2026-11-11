@@ -1146,3 +1146,98 @@ button[style*="background:#FF5A1F"]:hover {
   .ab-sticky-bar-actions > a { flex: 1; justify-content: center; }
   .ab-has-sticky-bar { padding-bottom: 168px; }
 }
+
+/* ===== Главная RU, обновление 11.11.26 ===== */
+.ab-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 760px) {
+  .ab-grid-3 { grid-template-columns: 1fr !important; }
+}
+
+.ab-logos-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 28px 56px;
+}
+.ab-logos-row img {
+  height: 48px;
+  width: auto;
+  display: block;
+}
+@media (max-width: 760px) {
+  .ab-logos-row { gap: 22px 32px; }
+  .ab-logos-row img { height: 30px; }
+}
+
+.ab-certs-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1024px) {
+  .ab-certs-grid-4 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 760px) {
+  .ab-home h1,
+  .ab-home h2,
+  .ab-home h3 { text-wrap: balance; }
+  .ab-home p { text-wrap: pretty; }
+
+  .ab-hero-facts { flex-wrap: nowrap !important; gap: 12px 14px !important; }
+  .ab-hero-facts > div > div:last-child { font-size: 12px !important; }
+  .ab-hero-facts > div { min-width: 0; }
+  .ab-fact-v { font-size: 18px !important; }
+
+  .ab-logos-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+    gap: 26px 16px;
+  }
+  .ab-logos-row img {
+    height: 30px;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .ab-logos-row img:nth-child(-n+2) { grid-column: 1 / -1; }
+
+  .ab-certs-grid-4 { gap: 12px; }
+  .ab-certs-grid-4 > div { padding: 12px !important; border-radius: 14px !important; }
+  .ab-certs-grid-4 > div > div:first-child { margin-bottom: 10px !important; gap: 8px !important; }
+  .ab-certs-grid-4 > div > div:first-child img { width: 30px !important; height: 30px !important; }
+  .ab-certs-grid-4 > div > div:first-child div[style*="font-size:15px"] { font-size: 13px !important; line-height: 1.25 !important; }
+  .ab-certs-grid-4 > div > a { font-size: 12px !important; padding: 9px 4px !important; }
+}
+
+/* Шапка главной прилипает при прокрутке (на мобильном уже position: fixed выше) */
+.ab-home .ab-header-home {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+}
+html { scroll-padding-top: 88px; }
+
+@media (max-width: 600px) {
+  .ab-home .ab-header-home + .ab-page-first-section { padding-top: 98px !important; }
+}
+
+.ab-header-nav a { white-space: nowrap; }
+
+/* Карточки кейсов: горизонтальные ряды со скриншотом, как на direct-сайте */
+.ab-case-row { display: flex; align-items: stretch; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.ab-case-row:hover { transform: translateY(-4px); box-shadow: 0 18px 36px -24px rgba(60,40,20,0.3); }
+.ab-case-media { flex: 0 0 380px; min-width: 0; background: #F3EFE8; padding: 16px 0 16px 16px; }
+.ab-case-frame { height: 230px; width: 100%; background: #fff; border-radius: 10px 0 0 10px; overflow: hidden; display: flex; flex-direction: column; }
+.ab-case-frame img { flex: 1; min-height: 0; width: 100%; display: block; object-fit: cover; object-position: left top; }
+@media (max-width: 760px) {
+  .ab-case-row { flex-direction: column; }
+  .ab-case-media { flex-basis: auto; padding: 16px 16px 0; }
+  .ab-case-frame { height: auto; aspect-ratio: 16 / 9; border-radius: 10px 10px 0 0; }
+}

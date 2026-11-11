@@ -287,9 +287,25 @@ document.querySelectorAll('.ab-case-tab').forEach(function (btn) {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (sessionStorage.getItem('ab_exit_shown')) return;
 
+  var armed = false;
+  var lastY = null;
+  var movingUp = false;
+
+  // Не слушаем сразу после загрузки — даём странице отрисоваться/сдвинуться,
+  // чтобы это не принялось за уход с сайта.
+  setTimeout(function () { armed = true; }, 3000);
+
+  document.addEventListener('mousemove', function (e) {
+    if (lastY !== null) movingUp = e.clientY < lastY;
+    lastY = e.clientY;
+  });
+
   document.addEventListener('mouseout', function (e) {
-    if (e.clientY > 0 || e.relatedTarget) return;
+    if (!armed) return;
     if (sessionStorage.getItem('ab_exit_shown')) return;
+    // Настоящий уход: курсор реально двигался вверх и покинул окно сверху.
+    if (!movingUp || e.clientY > 0 || e.relatedTarget) return;
+    if (document.querySelector('.ab-popup-overlay.is-open')) return;
     sessionStorage.setItem('ab_exit_shown', '1');
     popup.classList.add('is-open');
   });

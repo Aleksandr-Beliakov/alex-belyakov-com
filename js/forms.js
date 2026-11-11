@@ -1,5 +1,6 @@
 var AB_WEB3FORMS_ACCESS_KEY = 'c0f9589b-17fa-40d7-adff-84f53ee8996a';
 var AB_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var AB_IS_EN = document.documentElement.lang === 'en';
 var AB_PHONE_CHARS_REGEX = /^[\d\s\-+()]+$/;
 
 function abIsValidPhone(value) {
@@ -51,9 +52,9 @@ function abInitWeb3Form(form) {
     if (invalid) {
       if (requiredHint) {
         requiredHint.textContent = invalid.reason === 'format'
-          ? 'Введите настоящий email, например name@mail.ru'
+          ? (AB_IS_EN ? 'Please enter a valid email, for example name@mail.com' : 'Введите настоящий email, например name@mail.ru')
           : invalid.reason === 'phone'
-            ? 'Введите настоящий номер телефона, например +7 989 047-31-81'
+            ? (AB_IS_EN ? 'Please enter a valid phone number, for example +7 989 047-31-81' : 'Введите настоящий номер телефона, например +7 989 047-31-81')
             : requiredHintDefaultText;
         requiredHint.style.display = 'block';
       }
@@ -73,7 +74,7 @@ function abInitWeb3Form(form) {
 
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Отправка...';
+      submitBtn.textContent = AB_IS_EN ? 'Sending...' : 'Отправка...';
     }
 
     var formData = new FormData(form);
