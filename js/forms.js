@@ -90,7 +90,6 @@ function abInitWeb3Form(form) {
         if (data && data.success) {
           window.dataLayer = window.dataLayer || [];
           window.dataLayer.push({ event: 'form_sent', form_id: form.id });
-          console.log('form_sent', form.id);
           window.location.href = redirectUrl;
         } else {
           throw new Error('web3forms error');

@@ -25,14 +25,15 @@
     document.body.appendChild(el);
 
     el.querySelector('.ab-cookie-banner-accept').addEventListener('click', function () {
-      localStorage.setItem(STORAGE_KEY, 'accepted');
+      try { localStorage.setItem(STORAGE_KEY, 'accepted'); } catch (e) {}
       el.remove();
       loadGTM();
     });
   }
 
   function init() {
-    var consent = localStorage.getItem(STORAGE_KEY);
+    var consent = null;
+    try { consent = localStorage.getItem(STORAGE_KEY); } catch (e) {}
     if (consent === 'accepted') {
       loadGTM();
     } else {

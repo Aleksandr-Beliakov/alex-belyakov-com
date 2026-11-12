@@ -1,21 +1,14 @@
+/* Безопасная работа с localStorage/sessionStorage (в приватном режиме и при блокировке они бросают исключение; поэтому имя хранилища передается строкой) */
+var abStore = {
+  get: function (store, key) { try { return window[store].getItem(key); } catch (e) { return null; } },
+  set: function (store, key, value) { try { window[store].setItem(key, value); } catch (e) {} }
+};
+
 function abFaqToggle(btn) {
   var item = btn.closest('.ab-faq-item');
   var isOpen = item.classList.contains('is-open');
   document.querySelectorAll('.ab-faq-item').forEach(function (el) { el.classList.remove('is-open'); });
   if (!isOpen) item.classList.add('is-open');
-}
-
-function abAuditIntroToggle(btn) {
-  var h2 = btn.closest('h2');
-  var wrap = h2 && h2.parentElement;
-  var text = wrap && wrap.querySelector('.ab-audit-intro-text');
-  if (text) text.classList.add('is-open');
-  btn.style.display = 'none';
-}
-
-function abAuditCardToggle(btn) {
-  var card = btn.closest('.ab-audit-card');
-  if (card) card.classList.toggle('is-open');
 }
 
 function abToggleMobileNav(btn) {
@@ -91,7 +84,10 @@ function abOpenLightboxSrc(src) {
   big.src = src;
   big.style.cssText = 'max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.4);';
   overlay.appendChild(big);
-  overlay.addEventListener('click', function () { overlay.remove(); });
+  function close() { overlay.remove(); document.removeEventListener('keydown', onKey); }
+  function onKey(e) { if (e.key === 'Escape') close(); }
+  overlay.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
   document.body.appendChild(overlay);
 }
 
@@ -130,84 +126,6 @@ function abProcessSlide(btn, dir) {
   var step = card ? card.getBoundingClientRect().width + 20 : row.clientWidth;
   row.scrollBy({ left: dir * step, behavior: 'smooth' });
 }
-
-function abSolutionSlide(btn, dir) {
-  var slider = btn.closest('.ab-solution-slider');
-  var row = slider && slider.querySelector('.ab-solution-row');
-  if (!row) return;
-  var card = row.querySelector('.ab-solution-card');
-  var step = card ? card.getBoundingClientRect().width + 20 : row.clientWidth;
-  row.scrollBy({ left: dir * step, behavior: 'smooth' });
-}
-
-(function () {
-  var row = document.querySelector('.ab-solution-row');
-  if (!row) return;
-
-  var isDown = false, startX = 0, startScroll = 0;
-  row.addEventListener('pointerdown', function (e) {
-    if (e.pointerType !== 'mouse') return;
-    isDown = true;
-    row.classList.add('is-dragging');
-    startX = e.clientX;
-    startScroll = row.scrollLeft;
-  });
-  window.addEventListener('pointermove', function (e) {
-    if (!isDown) return;
-    row.scrollLeft = startScroll - (e.clientX - startX);
-  });
-  window.addEventListener('pointerup', function () {
-    isDown = false;
-    row.classList.remove('is-dragging');
-  });
-
-  var dotsWrap = document.querySelector('.ab-solution-dots');
-  var cards = row.querySelectorAll('.ab-solution-card');
-  if (dotsWrap && cards.length && 'IntersectionObserver' in window) {
-    cards.forEach(function (_, i) {
-      var dot = document.createElement('span');
-      dot.className = 'ab-solution-dot' + (i === 0 ? ' is-active' : '');
-      dotsWrap.appendChild(dot);
-    });
-    var dots = dotsWrap.querySelectorAll('.ab-solution-dot');
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var idx = Array.prototype.indexOf.call(cards, entry.target);
-        dots.forEach(function (d) { d.classList.remove('is-active'); });
-        if (dots[idx]) dots[idx].classList.add('is-active');
-      });
-    }, { root: row, threshold: 0.6 });
-    cards.forEach(function (c) { observer.observe(c); });
-  }
-
-  function abSyncSolutionRowHeights() {
-    cards.forEach(function (c) {
-      c.querySelectorAll('.ab-solution-row-item').forEach(function (el) { el.style.minHeight = ''; });
-    });
-    var maxRows = 0;
-    cards.forEach(function (c) { maxRows = Math.max(maxRows, c.querySelectorAll('.ab-solution-row-item').length); });
-    for (var i = 0; i < maxRows; i++) {
-      var maxH = 0;
-      cards.forEach(function (c) {
-        var item = c.querySelectorAll('.ab-solution-row-item')[i];
-        if (item) maxH = Math.max(maxH, item.offsetHeight);
-      });
-      cards.forEach(function (c) {
-        var item = c.querySelectorAll('.ab-solution-row-item')[i];
-        if (item) item.style.minHeight = maxH + 'px';
-      });
-    }
-  }
-
-  if (cards.length) {
-    abSyncSolutionRowHeights();
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(abSyncSolutionRowHeights);
-    }
-    window.addEventListener('resize', abSyncSolutionRowHeights);
-  }
-})();
 
 (function () {
   var row = document.querySelector('.ab-process-row');
@@ -251,41 +169,12 @@ function abSolutionSlide(btn, dir) {
   }
 })();
 
-document.querySelectorAll('.ab-compare-tab').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var list = btn.closest('.ab-compare-list');
-    if (!list) return;
-    var tab = btn.getAttribute('data-tab');
-    list.setAttribute('data-active-tab', tab);
-    list.querySelectorAll('.ab-compare-tab').forEach(function (b) {
-      var active = b === btn;
-      b.classList.toggle('is-active', active);
-      b.setAttribute('aria-selected', active ? 'true' : 'false');
-    });
-  });
-});
-
-/* ===== Международная главная: фильтр кейсов по тегам ===== */
-document.querySelectorAll('.ab-case-tab').forEach(function (btn) {
-  btn.addEventListener('click', function () {
-    var wrap = btn.closest('.ab-cases-filter-wrap');
-    if (!wrap) return;
-    var tag = btn.getAttribute('data-case-tab');
-    wrap.querySelectorAll('.ab-case-tab').forEach(function (b) { b.classList.remove('is-active'); });
-    btn.classList.add('is-active');
-    wrap.querySelectorAll('[data-case-tags]').forEach(function (card) {
-      var tags = card.getAttribute('data-case-tags').split(' ');
-      card.style.display = (tag === 'all' || tags.indexOf(tag) !== -1) ? '' : 'none';
-    });
-  });
-});
-
 /* ===== Международная главная: exit-intent попап (десктоп, один раз за сессию) ===== */
 (function () {
   var popup = document.getElementById('popup-exit');
   if (!popup) return;
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  if (sessionStorage.getItem('ab_exit_shown')) return;
+  if (abStore.get('sessionStorage', 'ab_exit_shown')) return;
 
   var armed = false;
   var lastY = null;
@@ -302,11 +191,22 @@ document.querySelectorAll('.ab-case-tab').forEach(function (btn) {
 
   document.addEventListener('mouseout', function (e) {
     if (!armed) return;
-    if (sessionStorage.getItem('ab_exit_shown')) return;
+    if (abStore.get('sessionStorage', 'ab_exit_shown')) return;
     // Настоящий уход: курсор реально двигался вверх и покинул окно сверху.
     if (!movingUp || e.clientY > 0 || e.relatedTarget) return;
     if (document.querySelector('.ab-popup-overlay.is-open')) return;
-    sessionStorage.setItem('ab_exit_shown', '1');
+    abStore.set('sessionStorage', 'ab_exit_shown', '1');
     popup.classList.add('is-open');
   });
 })();
+
+/* Попапы: семантика диалога для скринридеров */
+document.querySelectorAll('.ab-popup-overlay').forEach(function (el) {
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+});
+
+/* Поля попапов без подписи: берем название для скринридера из placeholder */
+document.querySelectorAll('.ab-popup-overlay input[placeholder], .ab-popup-overlay textarea[placeholder]').forEach(function (el) {
+  if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', el.getAttribute('placeholder'));
+});
